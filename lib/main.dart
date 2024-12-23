@@ -66,9 +66,9 @@ class _LanguageLearningAppState extends State<LanguageLearningApp> {
                 //   ],
                 //   // IconButton(
                 // ),
-                body: //Profile(),
-                    //RegistrationScreen(),
-                    Mybottom(),
+                body: Profile(),
+                //RegistrationScreen(),
+                //Mybottom(),
               )));
 //Mybottom(), //Scaffold(
 //appBar: AppBar(title: Text('Home')),
