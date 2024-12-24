@@ -29,15 +29,15 @@ class _LanguageLearningAppState extends State<LanguageLearningApp> {
             ChangeNotifierProvider(create: (_) => FavoriteProvider()),
           ],
           child: MaterialApp(
-              title: ' Story Books',
-              debugShowCheckedModeBanner: false,
-              theme: ThemeData(
-                colorSchemeSeed: Colors.red,
-                scaffoldBackgroundColor: Colors.white,
-              ),
-              //home: RegistrationScreen(),
+            title: ' Story Books',
+            debugShowCheckedModeBanner: false,
+            theme: ThemeData(
+              colorSchemeSeed: Colors.red,
+              scaffoldBackgroundColor: Colors.white,
+            ),
+            //home: RegistrationScreen(),
 
-              home: Scaffold(
+            home: //Scaffold(
                 // appBar: AppBar(
                 //   title: Text(
                 //     'BOOKS STORE ',
@@ -66,10 +66,12 @@ class _LanguageLearningAppState extends State<LanguageLearningApp> {
                 //   ],
                 //   // IconButton(
                 // ),
-                body: Profile(),
-                //RegistrationScreen(),
-                //Mybottom(),
-              )));
+                //body:
+                Profile(),
+            //RegistrationScreen(),
+            //Mybottom(),
+          ));
+// );
 //Mybottom(), //Scaffold(
 //appBar: AppBar(title: Text('Home')),
 }
