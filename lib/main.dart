@@ -88,7 +88,7 @@ class _MybottomState extends State<Mybottom> {
   final _pageOptions = [
     HomeScreen(),
     //CartDetails(),
-    QuizScreen(),
+    //QuizScreen(),
     Users(),
   ];
   var list = [

@@ -1,12 +1,8 @@
 import 'dart:io';
-
 import 'package:LanguageLearningApp/main.dart';
 import 'package:LanguageLearningApp/models/Datauser.dart';
-import 'package:LanguageLearningApp/screens/home_screen.dart';
 import 'package:LanguageLearningApp/screens/login.dart';
 import 'package:LanguageLearningApp/screens/registration.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -20,7 +16,9 @@ class Profile extends StatefulWidget {
 }
 
 class _ProfileState extends State<Profile> {
-  File? _imageFile = null;
+  File? _imageFile;
+
+  //_imageFile = null;
   bool isLoading = false;
   TextEditingController _UsernametextEditingController =
       TextEditingController();
@@ -72,7 +70,7 @@ class _ProfileState extends State<Profile> {
                       ? Text("no image choosen")
                       : Image.file(
                           _imageFile!,
-                          height: 150,
+                          height: 100,
                         ),
                   SizedBox(
                     height: 20,
@@ -83,7 +81,7 @@ class _ProfileState extends State<Profile> {
                         onPressed: () {
                           pickImage();
                         },
-                        child: Icon(Icons.add_a_photo)),
+                        child: Text("choose image")),
                   ),
                   SizedBox(
                     height: 20,
@@ -160,10 +158,11 @@ class _ProfileState extends State<Profile> {
   }
 
   Future pickImage() async {
-    var file =
-        await ImagePicker.platform.pickImage(source: ImageSource.gallery);
+    var file = await ImagePicker().pickImage(source: ImageSource.gallery);
     setState(() {
-      _imageFile = file as File?;
+      if (file != null) {
+        _imageFile = File(file.path);
+      }
     });
   }
 
