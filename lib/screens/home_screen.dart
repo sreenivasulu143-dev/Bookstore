@@ -13,66 +13,105 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreeen extends State<HomeScreen> {
   int isSelected = 0;
+  bool isLoading = false;
+  List<dynamic> displayedBooks = [];
 
   @override
+  void initState() {
+    super.initState();
+    setState(() {
+      displayedBooks = Myproducts.allbooks;
+      isLoading = false;
+    });
+  }
+
+  void searchBooks(String query) {
+    final suggestions = Myproducts.allbooks.where((allBooks) {
+      final bookTitle = allBooks.name.toLowerCase();
+      final input = query.toLowerCase();
+      return bookTitle.contains(input);
+    }).toList();
+    setState(() {
+      displayedBooks = suggestions;
+    });
+  }
+
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text('home'),
-        ),
-        body: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            children: [
-              //   TabBar(
-              //     indicator: BoxDecoration(borderRadius: BorderRadius.circular(10),color: Colors.greenAccent),
-              //     labelPadding: EdgeInsets.only(top: 10),
-              //     unselectedLabelColor: Colors.black12,
-              //     indicatorSize: TabBarIndicatorSize.tab,
-
-              // children: [
-              // const Text(
-              //   "All Books",
-              //   style: TextStyle(
-              //     fontSize: 27,
-              //     fontWeight: FontWeight.bold,
-              //   ),
-              // ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  _buildProductCategory(
-                    index: 0,
-                    name: "ALL BOOKS",
-                  ),
-                  _buildProductCategory(index: 1, name: "TRENDING BOOKS"),
-                  //_buildProductCategory(index: 2, name: "MY COLLECTON"),
-                ],
+          title: Text('Book Store'),
+          centerTitle: true,
+          backgroundColor: Colors.red,
+          actions: [
+            IconButton(
+              icon: Icon(
+                Icons.search,
+                size: 30,
+                color: Colors.white,
               ),
-              const SizedBox(height: 13),
-              Expanded(
-                  child: isSelected == 0
-                      ? _buildAllBooks()
-                      : isSelected == 1
-                          ? _buildTrendingBooks()
-                          : isSelected == 2),
-              //_buildMyCollection(),),
-              // ],
-            ],
-          ),
-        ));
+              onPressed: () {
+                showSearch(context: context, delegate: BookSearchDelegate());
+              },
+            ),
+          ],
+        ),
+        body: isLoading
+            ? Center(
+                child: CircularProgressIndicator(),
+              )
+            : Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  children: [
+                    //   TabBar(
+                    //     indicator: BoxDecoration(borderRadius: BorderRadius.circular(10),color: Colors.greenAccent),
+                    //     labelPadding: EdgeInsets.only(top: 10),
+                    //     unselectedLabelColor: Colors.black12,
+                    //     indicatorSize: TabBarIndicatorSize.tab,
+
+                    // children: [
+                    // const Text(
+                    //   "All Books",
+                    //   style: TextStyle(
+                    //     fontSize: 27,
+                    //     fontWeight: FontWeight.bold,
+                    //   ),
+                    // ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        _buildProductCategory(
+                          index: 0,
+                          name: "ALL BOOKS",
+                        ),
+                        _buildProductCategory(index: 1, name: "TRENDING BOOKS"),
+                        //_buildProductCategory(index: 2, name: "MY COLLECTON"),
+                      ],
+                    ),
+                    const SizedBox(height: 13),
+                    Expanded(
+                        child: isSelected == 0
+                            ? _buildAllBooks(Myproducts.allbooks)
+                            // : isSelected == 1
+                            : _buildTrendingBooks(Myproducts.trendingbooks))
+                    // : isSelected == 2),
+                    //_buildMyCollection(),),
+                    // ],
+                  ],
+                ),
+              ));
   }
 
-  _buildProductCategory({required int index, required String name}) =>
+  Widget _buildProductCategory({required int index, required String name}) =>
       GestureDetector(
         onTap: () => setState(() => isSelected = index),
         child: Container(
           width: 120,
           height: 40,
-          margin: const EdgeInsets.only(top: 1, right: 25, left: 50),
+          margin: const EdgeInsets.only(top: 1, right: 10, left: 10),
           alignment: Alignment.center,
           decoration: BoxDecoration(
-            color: isSelected == index ? Colors.black : Colors.black12,
+            color: isSelected == index ? Colors.red : Colors.red.shade100,
             borderRadius: BorderRadius.circular(8),
           ),
           child: Text(
@@ -88,10 +127,10 @@ class _HomeScreeen extends State<HomeScreen> {
         ),
       );
 
-  _buildAllBooks() => GridView.builder(
+  Widget _buildAllBooks(List<dynamic> allbooks) => GridView.builder(
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 3,
-          childAspectRatio: (40 / 69),
+          crossAxisCount: 2,
+          childAspectRatio: 0.895,
           crossAxisSpacing: 10,
           mainAxisSpacing: 10,
         ),
@@ -106,17 +145,30 @@ class _HomeScreeen extends State<HomeScreen> {
                 builder: (context) => DetailsScreen(product: allbooks),
               ),
             ),
-            child: ProductCard(product: allbooks),
+            // child: ProductCard(product: allbooks),
+            child: ProductCard(
+              product: allbooks,
+              fit: BoxFit.fill,
+              //elevation: 5,
+              // child: Column(
+              //   crossAxisAlignment: CrossAxisAlignment.stretch,
+              //   children: [
+              //     Expanded(child: ProductCard(product: allbooks,),),
+              //     Padding(padding: const EdgeInsets.all(8.0),child: Text(Product['name'],),),
+              //   ],
+              // ),
+            ),
           );
         },
       );
 
-  _buildTrendingBooks() => GridView.builder(
+  Widget _buildTrendingBooks(List<dynamic> trendingbooks) => GridView.builder(
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 3,
-          childAspectRatio: (53 / 48),
-          crossAxisSpacing: 2,
-          mainAxisSpacing: 6,
+          //childAspectRatio: (53 / 48),
+          childAspectRatio: 1.1,
+          crossAxisSpacing: 10,
+          mainAxisSpacing: 10,
         ),
         scrollDirection: Axis.horizontal,
         itemCount: Myproducts.trendingbooks.length,
@@ -129,7 +181,10 @@ class _HomeScreeen extends State<HomeScreen> {
                 builder: (context) => DetailsScreen(product: trendingbooks),
               ),
             ),
-            child: ProductCard(product: trendingbooks),
+            child: ProductCard(
+              product: trendingbooks,
+              fit: BoxFit.cover,
+            ),
           );
         },
       );
@@ -145,4 +200,95 @@ class _HomeScreeen extends State<HomeScreen> {
 //     return ProductCard(product: mycollection);
 //   },
 // );
+}
+
+class BookSearchDelegate extends SearchDelegate {
+  @override
+  List<Widget>? buildActions(BuildContext context) {
+    return [
+      IconButton(
+        icon: Icon(Icons.clear),
+        onPressed: () {
+          query = '';
+          showSuggestions(context);
+        },
+      ),
+    ];
+  }
+
+  @override
+  Widget? buildLeading(BuildContext context) {
+    return IconButton(
+      icon: Icon(Icons.arrow_back),
+      onPressed: () {
+        close(context, null);
+      },
+    );
+  }
+
+  @override
+  Widget buildResults(BuildContext context) {
+    final suggestions = Myproducts.allbooks.where((allbook) {
+      final bookTile = allbook.name.toLowerCase();
+      final input = query.toLowerCase();
+      return bookTile.contains(input);
+    }).toList();
+    return ListView.builder(
+      itemCount: suggestions.length,
+      itemBuilder: (context, index) {
+        final allbooks = suggestions[index];
+        return Center(
+          child: ListTile(
+            title: Text(allbooks.name),
+            subtitle: Text(allbooks.category),
+            leading: Image.asset(
+              allbooks.image,
+              width: 50,
+              fit: BoxFit.cover,
+            ),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => DetailsScreen(product: allbooks),
+                ),
+              );
+            },
+          ),
+        );
+      },
+    );
+  }
+
+  @override
+  Widget buildSuggestions(BuildContext context) {
+    final suggestions = Myproducts.allbooks.where((allbooks) {
+      final bookTile = allbooks.name.toLowerCase();
+      final input = query.toLowerCase();
+      return bookTile.contains(input);
+    }).toList();
+    return ListView.builder(
+      itemCount: suggestions.length,
+      itemBuilder: (context, index) {
+        final allbooks = suggestions[index];
+        return ListTile(
+          title: Text(allbooks.name),
+          subtitle: Text(allbooks.category),
+          leading: Image.asset(
+            allbooks.image,
+            width: 50,
+            fit: BoxFit.cover,
+          ),
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => DetailsScreen(product: allbooks),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
 }
