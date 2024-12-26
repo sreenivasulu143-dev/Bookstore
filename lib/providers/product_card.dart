@@ -16,15 +16,8 @@ class _ProductCardState extends State<ProductCard> {
   @override
   Widget build(BuildContext context) {
     final provider = FavoriteProvider.of(context);
-    return
-        // Container(
-        Card(
+    return Card(
       elevation: 5,
-      //width: MediaQuery.of(context).size.width / 2,
-      // decoration: BoxDecoration(
-      // borderRadius: BorderRadius.circular(8.0),
-      //color: Colors.deepOrange.withOpacity(0.1),
-      //),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
