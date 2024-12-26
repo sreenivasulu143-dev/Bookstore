@@ -1,6 +1,5 @@
 import 'package:LanguageLearningApp/providers/favorite_provider.dart';
 import 'package:flutter/material.dart';
-import '../models/product.dart';
 
 class ProductCard extends StatefulWidget {
   final dynamic product;
@@ -52,21 +51,6 @@ class _ProductCardState extends State<ProductCard> {
               fit: BoxFit.cover,
             ),
           ),
-          // Row(
-          //    crossAxisAlignment: CrossAxisAlignment.start,
-          //    mainAxisAlignment: MainAxisAlignment.center,
-          //    children: [
-          //      GestureDetector(
-          //        onTap: ()=> provider.toggleFavorite(widget.product),
-          //      child: Icon(
-          //        provider.isExit(widget.product)
-          //        ? Icons.library_add_check_rounded
-          //       : Icons.library_add_check_outlined,
-          //        color: Colors.blueGrey,
-          // ),
-          //   ),
-          // ],
-          //),
           SizedBox(
             height: 180,
             width: 180,
@@ -89,21 +73,6 @@ class _ProductCardState extends State<ProductCard> {
               color: Colors.brown,
             ),
           ),
-          //Text('\$''${widget.product.price}',style: const TextStyle(fontSize: 18,fontWeight: FontWeight.bold),),
-          //],
-          //crossAxisAlignment: CrossAxisAlignment.start,
-          //mainAxisAlignment: MainAxisAlignment.center,
-          //children: [
-          //   GestureDetector(
-          //     onTap: ()=> provider.toggleFavorite(widget.product),
-          //     child: Icon(size: 10,
-          //       provider.isExit(widget.product)
-          //           ? Icons.done_rounded
-          //           : Icons.add_shopping_cart_sharp,
-          //
-          //       color: Colors.black,
-          //     ),
-          // ),
         ],
       ),
     );
