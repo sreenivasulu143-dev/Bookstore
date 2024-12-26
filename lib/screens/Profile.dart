@@ -1,15 +1,12 @@
 import 'dart:io';
-import 'package:LanguageLearningApp/main.dart';
 import 'package:LanguageLearningApp/models/Datauser.dart';
+import 'package:LanguageLearningApp/screens/bottomnav.dart';
 import 'package:LanguageLearningApp/screens/login.dart';
 import 'package:LanguageLearningApp/screens/registration.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:image_picker/image_picker.dart';
 
 class Profile extends StatefulWidget {
   @override
@@ -19,7 +16,6 @@ class Profile extends StatefulWidget {
 class _ProfileState extends State<Profile> {
   File? _imageFile;
 
-  //_imageFile = null;
   bool isLoading = false;
   TextEditingController _UsernametextEditingController =
       TextEditingController();
@@ -67,26 +63,6 @@ class _ProfileState extends State<Profile> {
               margin: EdgeInsets.all(16),
               child: Column(
                 children: <Widget>[
-                  // _imageFile == null
-                  //     ? Text("no image choosen")
-                  //     : Image.file(
-                  //         _imageFile!,
-                  //         height: 100,
-                  //       ),
-                  // SizedBox(
-                  //   height: 20,
-                  // ),
-                  // Container(
-                  //   alignment: Alignment.center,
-                  //   child: ElevatedButton(
-                  //       onPressed: () {
-                  //         // pickImage();
-                  //       },
-                  //       child: Text("choose image")),
-                  // ),
-                  // SizedBox(
-                  //   height: 20,
-                  // ),
                   TextField(
                     controller: _UsernametextEditingController,
                     decoration: InputDecoration(
@@ -117,13 +93,6 @@ class _ProfileState extends State<Profile> {
                   SizedBox(
                     height: 20,
                   ),
-                  // TextField(
-                  //   controller: ,
-                  //   decoration: InputDecoration(
-                  //       hintText: "enter Mobile number",
-                  //       labelText: "Mobile",
-                  //       border: OutlineInputBorder()),
-                  // ),
                   TextField(
                     controller: _AddresstextEditingController,
                     decoration: InputDecoration(
@@ -141,11 +110,6 @@ class _ProfileState extends State<Profile> {
                         padding: EdgeInsets.all(15),
                       ),
                       onPressed: () {
-                        // Navigator.push(
-                        //     context,
-                        //     MaterialPageRoute(
-                        //       builder: (context) => Mybottom(),
-                        //     ));
                         uploadStatus();
                       },
                       child: Text("Upload Details"),
@@ -185,7 +149,8 @@ class _ProfileState extends State<Profile> {
         .doc(dataUser.docid)
         .set(dataUser.toMap());
     Fluttertoast.showToast(msg: "details uploaded");
-    Navigator.pop(context);
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => Mybottom()));
 
     setState(() {
       isLoading = false;

@@ -1,13 +1,8 @@
-import 'dart:io';
-import 'package:LanguageLearningApp/main.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:image_picker/image_picker.dart';
 
 class Users extends StatelessWidget {
   @override
@@ -46,6 +41,7 @@ class _ProfileScreenState extends State<ProfileScreeen> {
         DocumentSnapshot doc = await FirebaseFirestore.instance
             .collection("B")
             .doc(user!.uid)
+            //.doc("G6Z1irQvF9v4aY3WIbiO")
             .get();
         if (doc.exists) {
           setState(() {
@@ -91,7 +87,7 @@ class _ProfileScreenState extends State<ProfileScreeen> {
                       SizedBox(
                         height: 20,
                       ),
-                      itemProfile('NAME', userData?['name'] ?? 'N/A',
+                      itemProfile('NAME', userData?['Username'] ?? '',
                           CupertinoIcons.person),
                       SizedBox(
                         height: 10,

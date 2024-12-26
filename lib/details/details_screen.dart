@@ -1,7 +1,5 @@
-import 'package:LanguageLearningApp/models/my_product.dart';
 import 'package:LanguageLearningApp/models/product.dart';
 import 'package:LanguageLearningApp/screens/bottom.dart';
-import 'package:LanguageLearningApp/screens/reader.dart';
 import 'package:flutter/material.dart';
 
 class DetailsScreen extends StatelessWidget {
@@ -18,9 +16,7 @@ class DetailsScreen extends StatelessWidget {
       ),
       body: Column(
         children: [
-          const SizedBox(
-            height: 10,
-          ),
+          const SizedBox(height: 10),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -62,40 +58,17 @@ class DetailsScreen extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    // Text(
-                    //   '\$' '${product.price}',
-                    //   style:
-                    //       TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-                    // ),
                   ],
                 ),
                 const SizedBox(height: 20),
                 Text(
                   product.description,
                   textAlign: TextAlign.justify,
-                  style: const TextStyle(
-                    fontSize: 14,
-                  ),
+                  style: const TextStyle(fontSize: 14),
                 ),
               ],
             ),
           ),
-          // Row(
-          //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          //   children: [
-          //     const Text("Available Location",style: TextStyle(fontWeight: FontWeight.bold,),
-          //     ),
-          //   ],
-          // ),
-          // const SizedBox(height: 8.0,),
-          // Row(
-          //   children: [
-          //     AvailableSize(size: "KN-2"),
-          //       AvailableSize(size: "AP-3"),
-          //       AvailableSize(size: "TN-6"),
-          //       AvailableSize(size: "KL-8"),
-          //     ],
-          //   )
         ],
       ),
       bottomSheet: BottomAppBar(
@@ -115,13 +88,25 @@ class DetailsScreen extends StatelessWidget {
             onTap: () => Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => bottom(product.doc_title),
+                builder: (context) => BottomReader(product: product),
               ),
             ),
-            child: Text("Read"),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.book, color: Colors.white),
+                SizedBox(width: 10),
+                Text(
+                  "Read",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
           ),
-          // const Icon(Icons.send),
-          //label: const Text("go to my books"),
         ),
       ),
     );
