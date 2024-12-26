@@ -2,9 +2,12 @@ import 'package:LanguageLearningApp/providers/favorite_provider.dart';
 import 'package:LanguageLearningApp/screens/Profile.dart';
 import 'package:LanguageLearningApp/screens/cart_details.dart';
 import 'package:LanguageLearningApp/screens/home_screen.dart';
+import 'package:LanguageLearningApp/screens/login.dart';
 import 'package:LanguageLearningApp/screens/registration.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:LanguageLearningApp/screens/quiz_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -14,8 +17,147 @@ import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  SystemChrome.setSystemUIOverlayStyle(
+    SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness: Brightness.dark,
+    ),
+  );
   runApp(LanguageLearningApp());
 }
+
+// class RegistrationScreen extends StatefulWidget {
+//   @override
+//   State<RegistrationScreen> createState() => _RegistrationScreenState();
+// }
+//
+// class _RegistrationScreenState extends State<RegistrationScreen> {
+//   late String _email, _password;
+//   var _formkey = GlobalKey<FormState>();
+//   bool isLoading = false;
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//         backgroundColor: Colors.deepOrangeAccent.shade100,
+//         title: Text(
+//           "Register",
+//         ),
+//         centerTitle: true,
+//       ),
+//       body: isLoading
+//           ? Center(child: CircularProgressIndicator())
+//           : Container(
+//         margin: EdgeInsets.all(16),
+//         alignment: Alignment.center,
+//         child: Center(
+//           child: Form(
+//             key: _formkey,
+//             child: Column(
+//               children: <Widget>[
+//                 SizedBox(
+//                   height: 20,
+//                 ),
+//                 TextFormField(
+//                   keyboardType: TextInputType.emailAddress,
+//                   validator: (items) {
+//                     return items!.contains("@")
+//                         ? null
+//                         : "Enter valid email";
+//                   },
+//                   onChanged: (item) {
+//                     setState(() {
+//                       _email = item;
+//                     });
+//                   },
+//                   decoration: InputDecoration(
+//                       hintText: 'Enter Email',
+//                       labelText: 'Email',
+//                       border: OutlineInputBorder()),
+//                 ),
+//                 SizedBox(
+//                   height: 20,
+//                 ),
+//                 TextFormField(
+//                   obscureText: true,
+//                   keyboardType: TextInputType.text,
+//                   validator: (items) {
+//                     return items!.length > 6
+//                         ? null
+//                         : "Password must be 6 characters";
+//                   },
+//                   onChanged: (item) {
+//                     setState(() {
+//                       _password = item;
+//                     });
+//                   },
+//                   decoration: InputDecoration(
+//                       hintText: 'Enter Password',
+//                       labelText: 'Password',
+//                       border: OutlineInputBorder()),
+//                 ),
+//                 SizedBox(
+//                   height: 20,
+//                 ),
+//                 Container(
+//                   width: double.infinity,
+//                   //color: Colors.blue,
+//                   child: ElevatedButton(
+//                     onPressed: () {
+//                       signup();
+//                     },
+//                     child: Text(
+//                       'Register',
+//                     ),
+//                   ),
+//                 ),
+//                 SizedBox(
+//                   height: 20,
+//                 ),
+//                 Container(
+//                   child: GestureDetector(
+//                       onTap: () {
+//                         Navigator.push(context,
+//                             MaterialPageRoute(builder: (_) => Login()));
+//                       },
+//                       child: Text("login in")),
+//                   alignment: Alignment.centerRight,
+//                 ),
+//               ],
+//             ),
+//           ),
+//         ),
+//       ),
+//     );
+//   }
+//
+//   void signup() {
+//     if (_formkey.currentState!.validate()) {
+//       setState(() {
+//         isLoading = true;
+//       });
+//       FirebaseAuth.instance
+//           .createUserWithEmailAndPassword(email: _email, password: _password)
+//           .then((user) {
+//         setState(() {
+//           isLoading = false;
+//         });
+//         Fluttertoast.showToast(msg: "register successfull");
+//         //
+//         Navigator.pushAndRemoveUntil(
+//             context,
+//             MaterialPageRoute(builder: (_) => Profile()),
+//                 (Route<dynamic> route) => false);
+//       }).catchError((onError) {
+//         setState(() {
+//           isLoading = false;
+//         });
+//         Fluttertoast.showToast(msg: "Error" + onError.toString());
+//       });
+//     }
+//   }
+// }
 
 class LanguageLearningApp extends StatefulWidget {
   @override
@@ -67,7 +209,7 @@ class _LanguageLearningAppState extends State<LanguageLearningApp> {
                 //   // IconButton(
                 // ),
                 //body:
-                // Profile(),
+                //Profile(),
                 //RegistrationScreen(),
                 Mybottom(),
           ));

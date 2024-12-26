@@ -3,6 +3,7 @@ import 'package:LanguageLearningApp/main.dart';
 import 'package:LanguageLearningApp/models/Datauser.dart';
 import 'package:LanguageLearningApp/screens/login.dart';
 import 'package:LanguageLearningApp/screens/registration.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -29,8 +30,8 @@ class _ProfileState extends State<Profile> {
   @override
   void initState() {
     super.initState();
-    FirebaseAuth.instance.authStateChanges().listen((firebaseuser) {
-      if (firebaseuser == null) {
+    FirebaseAuth.instance.authStateChanges().listen((firebaseUser) {
+      if (firebaseUser == null) {
         // user not logged in
         Navigator.pushAndRemoveUntil(
             context,
@@ -49,7 +50,7 @@ class _ProfileState extends State<Profile> {
         title: Text("profile"),
         actions: <Widget>[
           IconButton(
-              icon: Icon(Icons.exit_to_app),
+              icon: Icon(Icons.logout),
               onPressed: () {
                 FirebaseAuth.instance.signOut().then((onValue) {
                   Navigator.push(context,
@@ -66,26 +67,26 @@ class _ProfileState extends State<Profile> {
               margin: EdgeInsets.all(16),
               child: Column(
                 children: <Widget>[
-                  _imageFile == null
-                      ? Text("no image choosen")
-                      : Image.file(
-                          _imageFile!,
-                          height: 100,
-                        ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  Container(
-                    alignment: Alignment.center,
-                    child: ElevatedButton(
-                        onPressed: () {
-                          pickImage();
-                        },
-                        child: Text("choose image")),
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
+                  // _imageFile == null
+                  //     ? Text("no image choosen")
+                  //     : Image.file(
+                  //         _imageFile!,
+                  //         height: 100,
+                  //       ),
+                  // SizedBox(
+                  //   height: 20,
+                  // ),
+                  // Container(
+                  //   alignment: Alignment.center,
+                  //   child: ElevatedButton(
+                  //       onPressed: () {
+                  //         // pickImage();
+                  //       },
+                  //       child: Text("choose image")),
+                  // ),
+                  // SizedBox(
+                  //   height: 20,
+                  // ),
                   TextField(
                     controller: _UsernametextEditingController,
                     decoration: InputDecoration(
@@ -140,12 +141,11 @@ class _ProfileState extends State<Profile> {
                         padding: EdgeInsets.all(15),
                       ),
                       onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => Mybottom(),
-                            ));
-                        uploadImage();
+                        // Navigator.push(
+                        //     context,
+                        //     MaterialPageRoute(
+                        //       builder: (context) => Mybottom(),
+                        //     ));
                         uploadStatus();
                       },
                       child: Text("Upload Details"),
@@ -157,63 +157,58 @@ class _ProfileState extends State<Profile> {
     );
   }
 
-  Future pickImage() async {
-    var file = await ImagePicker().pickImage(source: ImageSource.gallery);
-    setState(() {
-      if (file != null) {
-        _imageFile = File(file.path);
-      }
-    });
-  }
+  // Future pickImage() async {
+  //   var file = await ImagePicker().pickImage(source: ImageSource.gallery);
+  //   setState(() {
+  //     if (file != null) {
+  //       _imageFile = File(file.path);
+  //     }
+  //   });
+  // }
 
   uploadStatus() async {
     setState(() {
       isLoading = true;
     });
-    var imageUpload = await uploadImage();
-    Datauser dataUser = new Datauser(
+    //var imageUpload = await uploadImage();
+    Datauser dataUser = Datauser(
         docid: '',
         imageURL: '',
-        Username: '',
-        Gender: '',
-        Address: '',
-        mobile: '');
-    dataUser.imageURL = imageUpload.toString();
-    dataUser.Username = _UsernametextEditingController.text;
-    dataUser.mobile = _mobiletextEditingController.text;
-    dataUser.Gender = _GendertextEditingController.toString();
-    dataUser.Address = _AddresstextEditingController.text;
-    // String docId =
-    // FirebaseFirestore.instance.collection("path").document().documentID;
-    //dataUser.docid = docId;
-    //await FirebaseFirestore.instance
-    //.collection("user")
-    //.document(dataUser.docid)
-    //.setData(dataUser.toMap());
+        Username: _UsernametextEditingController.text,
+        mobile: _mobiletextEditingController.text,
+        Gender: _GendertextEditingController.text,
+        Address: _AddresstextEditingController.text);
+    String docId = FirebaseFirestore.instance.collection("B").doc().id;
+    dataUser.docid = docId;
+    await FirebaseFirestore.instance
+        .collection("B")
+        .doc(dataUser.docid)
+        .set(dataUser.toMap());
     Fluttertoast.showToast(msg: "details uploaded");
+    Navigator.pop(context);
 
-    // setState(() {
-    // isLoading = false;
-    // });
+    setState(() {
+      isLoading = false;
+    });
   }
 
-  Future<dynamic> uploadImage() async {
-    // setState(() {
-    //   isLoading = true;
-    // });
-    FirebaseStorage storage = await FirebaseStorage.instance;
-    Reference ref = storage.ref().child("path" + DateTime.now().toString());
-    // UploadTask uploadTask = await ref.putFile(path);
-    //uploadTask.then((res) {
-    // res.ref.getDownloadURL();
-    //});
-    //TaskSnapshot snapshot = await UploadTask.onComplete;
-    //var downloadURl = await snapshot.ref.getDownloadURL();
-    Fluttertoast.showToast(msg: "image uploaded");
-    // print("downloadURl $downloadURl");
-    // setState(() {
-    //   isLoading = false;
-    // });
-    //return downloadURl;
-  }
+//   Future<dynamic> uploadImage() async {
+//     setState(() {
+//       isLoading = true;
+//     });
+//     FirebaseStorage storage = await FirebaseStorage.instance;
+//     Reference ref = storage.ref().child("A" + DateTime.now().toString());
+//     UploadTask uploadTask = ref.putFile(_imageFile!);
+//     TaskSnapshot snapshot = await uploadTask;
+//     uploadTask.then((res) {
+//       res.ref.getDownloadURL();
+//     });
+//     var downloadURl = await snapshot.ref.getDownloadURL();
+//     Fluttertoast.showToast(msg: "image uploaded");
+//     print("downloadURl $downloadURl");
+//     setState(() {
+//       isLoading = false;
+//     });
+//     return downloadURl;
+//   }
 }

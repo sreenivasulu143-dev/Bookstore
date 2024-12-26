@@ -1,11 +1,9 @@
-import 'package:LanguageLearningApp/screens/Profile.dart';
-import 'package:LanguageLearningApp/screens/login.dart';
-import 'package:LanguageLearningApp/screens/home_screen.dart';
-import 'package:LanguageLearningApp/screens/login.dart';
-import 'package:LanguageLearningApp/screens/quiz_detail_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import '';
+import 'Profile.dart';
+import 'login.dart';
 
 class RegistrationScreen extends StatefulWidget {
   @override

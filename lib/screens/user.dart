@@ -1,5 +1,7 @@
 import 'dart:io';
 import 'package:LanguageLearningApp/main.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -7,97 +9,127 @@ import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 
-void main() {
-  SystemChrome.setSystemUIOverlayStyle(
-    SystemUiOverlayStyle(
-      statusBarColor: Colors.transparent,
-      statusBarIconBrightness: Brightness.dark,
-    ),
-  );
-  runApp(LanguageLearningApp());
-}
-
 class Users extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'ACCOUNT',
+      title: 'account',
       theme: ThemeData(
         primarySwatch: Colors.deepOrange,
       ),
-      home: ProfileScreen(),
+      home: ProfileScreeen(),
     );
   }
 }
 
-class ProfileScreen extends StatefulWidget {
+class ProfileScreeen extends StatefulWidget {
   @override
-  State<ProfileScreen> createState() => _ProfileScreenState();
+  State<ProfileScreeen> createState() => _ProfileScreenState();
 }
 
-class _ProfileScreenState extends State<ProfileScreen> {
+class _ProfileScreenState extends State<ProfileScreeen> {
+  User? user;
+  Map<String, dynamic>? userData;
+  bool isloading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    fetchUserData();
+  }
+
+  Future<void> fetchUserData() async {
+    try {
+      user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        DocumentSnapshot doc = await FirebaseFirestore.instance
+            .collection("B")
+            .doc(user!.uid)
+            .get();
+        if (doc.exists) {
+          setState(() {
+            userData = doc.data() as Map<String, dynamic>?;
+            isloading = false;
+          });
+        } else {
+          print("document does not exist");
+          setState(() {
+            isloading = false;
+          });
+        }
+      }
+    } catch (e) {
+      print('error fetching user data:$e');
+      setState(() {
+        isloading = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(title: Text('ACCOUNT',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20,),),),
-      body: Padding(
-        padding: EdgeInsets.all(20),
-        child: Column(
-          children: <Widget>[
-            SizedBox(
-              height: 40,
-            ),
-            // _imageFile == null
-            //     ? Text("No Image choosen")
-            //     : Image.file(_imageFile),
-            // ElevatedButton(
-            //   onPressed: () {
-            //     pickImage();
-            //   },
-            //   child: Icon(Icons.add_a_photo),
-            // ),
-            // ElevatedButton(
-            //     onPressed: () {
-            //       upladImage();
-            //     },
-            //     child: Text("upload image")),
-            CircleAvatar(
-              radius: 70,
-              backgroundImage: AssetImage('assets/files/jack.jpeg'),
-            ),
-            SizedBox(
-              height: 20,
-            ),
-            itemProfile('NAME', 'JACK', CupertinoIcons.person),
-            SizedBox(
-              height: 10,
-            ),
-            itemProfile('MOBILE', '9533388462', CupertinoIcons.phone),
-            SizedBox(
-              height: 10,
-            ),
-            itemProfile('ADDRESS', 'Telangana address, HYDERABAD city',
-                CupertinoIcons.location),
-            SizedBox(
-              height: 10,
-            ),
-            itemProfile(
-                'EMAIL', 'srinusrinivas1359@gmail.com', CupertinoIcons.mail),
-            SizedBox(height: 20),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () {},
-                style: ElevatedButton.styleFrom(
-                  padding: EdgeInsets.all(15),
-                ),
-                child: Text('Edit Profile'),
-              ),
-            ),
-          ],
-        ),
+      appBar: AppBar(
+        backgroundColor: Colors.deepOrangeAccent.shade100,
+        title: Text("profile"),
       ),
+      body: isloading
+          ? Center(child: CircularProgressIndicator())
+          : userData != null
+              ? Padding(
+                  padding: EdgeInsets.all(20),
+                  child: Column(
+                    children: <Widget>[
+                      SizedBox(
+                        height: 40,
+                      ),
+                      CircleAvatar(
+                        radius: 70,
+                        backgroundImage: AssetImage('assets/files/jack.jpeg'),
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      itemProfile('NAME', userData?['name'] ?? 'N/A',
+                          CupertinoIcons.person),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      itemProfile('MOBILE', userData?['mobile'] ?? '',
+                          CupertinoIcons.phone),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      itemProfile('ADDRESS', userData?['Address'] ?? '',
+                          CupertinoIcons.location),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      itemProfile('GENDER', userData?['Gender'] ?? '',
+                          CupertinoIcons.person),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      itemProfile('EMAIL', 'srinusrinivas1359@gmail.com',
+                          CupertinoIcons.mail),
+                      SizedBox(height: 20),
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: () {},
+                          style: ElevatedButton.styleFrom(
+                            padding: EdgeInsets.all(15),
+                          ),
+                          child: Text('Edit Profile'),
+                        ),
+                      ),
+                    ],
+                  ),
+                )
+              : Center(
+                  child: Text('no data availale'),
+                ),
     );
   }
 
@@ -123,6 +155,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
     );
   }
+}
 
 // Future pickImage() async {
 //   var file = await ImagePicker.pickImage(source: ImageSource.gallery);
@@ -130,4 +163,3 @@ class _ProfileScreenState extends State<ProfileScreen> {
 //     _imageFile = file;
 //   });
 // }
-}
