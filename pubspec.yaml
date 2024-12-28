@@ -28,6 +28,7 @@ dependencies:
   syncfusion_flutter_pdfviewer: ^27.2.3
   flutter_native_splash: ^2.4.3
   http: ^1.2.2
+  firebase_database: ^11.2.0
 
 dev_dependencies:
   flutter_test:

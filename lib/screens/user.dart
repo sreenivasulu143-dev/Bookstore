@@ -2,160 +2,139 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
-class Users extends StatelessWidget {
+class UserProfile extends StatefulWidget {
+  const UserProfile({super.key});
+
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'account',
-      theme: ThemeData(
-        primarySwatch: Colors.deepOrange,
-      ),
-      home: ProfileScreeen(),
-    );
-  }
+  State<UserProfile> createState() => _UserProfileState();
 }
 
-class ProfileScreeen extends StatefulWidget {
-  @override
-  State<ProfileScreeen> createState() => _ProfileScreenState();
-}
-
-class _ProfileScreenState extends State<ProfileScreeen> {
+class _UserProfileState extends State<UserProfile> {
   User? user;
-  Map<String, dynamic>? userData;
-  bool isloading = true;
 
   @override
   void initState() {
     super.initState();
-    fetchUserData();
-  }
-
-  Future<void> fetchUserData() async {
-    try {
-      user = FirebaseAuth.instance.currentUser;
-      if (user != null) {
-        DocumentSnapshot doc = await FirebaseFirestore.instance
-            .collection("B")
-            .doc(user!.uid)
-            //.doc("G6Z1irQvF9v4aY3WIbiO")
-            .get();
-        if (doc.exists) {
-          setState(() {
-            userData = doc.data() as Map<String, dynamic>?;
-            isloading = false;
-          });
-        } else {
-          print("document does not exist");
-          setState(() {
-            isloading = false;
-          });
-        }
-      }
-    } catch (e) {
-      print('error fetching user data:$e');
-      setState(() {
-        isloading = false;
-      });
-    }
+    user = FirebaseAuth.instance.currentUser;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.deepOrangeAccent.shade100,
-        title: Text("profile"),
+        title: Text("Profile"),
       ),
-      body: isloading
-          ? Center(child: CircularProgressIndicator())
-          : userData != null
-              ? Padding(
-                  padding: EdgeInsets.all(20),
+      body: user != null
+          ? StreamBuilder<DocumentSnapshot>(
+              stream: FirebaseFirestore.instance
+                  .collection("B")
+                  .doc(user!.uid)
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(child: CircularProgressIndicator());
+                }
+                if (!snapshot.hasData || snapshot.data?.data() == null) {
+                  return Center(child: Text("No data available"));
+                }
+                Map<String, dynamic>? userData =
+                    snapshot.data?.data() as Map<String, dynamic>?;
+                return Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 15),
                   child: Column(
-                    children: <Widget>[
-                      SizedBox(
-                        height: 40,
-                      ),
-                      CircleAvatar(
-                        radius: 70,
-                        backgroundImage: AssetImage('assets/files/jack.jpeg'),
-                      ),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      itemProfile('NAME', userData?['Username'] ?? '',
-                          CupertinoIcons.person),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      itemProfile('MOBILE', userData?['mobile'] ?? '',
-                          CupertinoIcons.phone),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      itemProfile('ADDRESS', userData?['Address'] ?? '',
-                          CupertinoIcons.location),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      itemProfile('GENDER', userData?['Gender'] ?? '',
-                          CupertinoIcons.person),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      itemProfile('EMAIL', 'srinusrinivas1359@gmail.com',
-                          CupertinoIcons.mail),
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
                       SizedBox(height: 20),
-                      SizedBox(
-                        width: double.infinity,
-                        child: ElevatedButton(
-                          onPressed: () {},
-                          style: ElevatedButton.styleFrom(
-                            padding: EdgeInsets.all(15),
+                      Center(
+                        child: Container(
+                          height: 130,
+                          width: 130,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(color: Colors.white, width: 5),
                           ),
-                          child: Text('Edit Profile'),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(50),
+                            child: userData?["imageURL"] != null &&
+                                    userData?["imageURL"]!.isNotEmpty
+                                ? Image.network(
+                                    userData?["imageURL"] ?? '',
+                                    fit: BoxFit.cover,
+                                    loadingBuilder:
+                                        (context, child, loadingProgress) {
+                                      if (loadingProgress == null) return child;
+                                      return Center(
+                                          child: CircularProgressIndicator());
+                                    },
+                                    errorBuilder: (context, object, stack) {
+                                      return Container(
+                                        child: Icon(
+                                          Icons.error_outline,
+                                          color: Colors.redAccent,
+                                        ),
+                                      );
+                                    },
+                                  )
+                                : Icon(Icons.person, size: 35),
+                          ),
                         ),
+                      ),
+                      SizedBox(height: 40),
+                      ProfileItem(
+                        title: 'Username',
+                        value: userData?['Username'] ?? 'N/A',
+                        iconData: Icons.person_outline,
+                      ),
+                      ProfileItem(
+                        title: 'Phone',
+                        value: userData?['mobile'] ?? 'N/A',
+                        iconData: Icons.phone_outlined,
+                      ),
+                      ProfileItem(
+                        title: 'Address',
+                        value: userData?['Address'] ?? 'N/A',
+                        iconData: Icons.telegram_outlined,
+                      ),
+                      ProfileItem(
+                        title: 'Gender',
+                        value: userData?['Gender'] ?? 'N/A',
+                        iconData: Icons.person_outline,
                       ),
                     ],
                   ),
-                )
-              : Center(
-                  child: Text('no data availale'),
-                ),
-    );
-  }
-
-  itemProfile(String title, String subtitle, IconData iconData) {
-    return Container(
-      decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(10),
-          boxShadow: [
-            BoxShadow(
-              offset: Offset(0, 5),
-              color: Colors.deepOrange.withOpacity(.2),
-              spreadRadius: 2,
-              blurRadius: 10,
-            ),
-          ]),
-      child: ListTile(
-        title: Text(title),
-        subtitle: Text(subtitle),
-        leading: Icon(iconData),
-        trailing: Icon(Icons.arrow_forward, color: Colors.grey.shade400),
-        tileColor: Colors.white,
-      ),
+                );
+              },
+            )
+          : Center(child: Text('No user logged in')),
     );
   }
 }
 
-// Future pickImage() async {
-//   var file = await ImagePicker.pickImage(source: ImageSource.gallery);
-//   setState(() {
-//     _imageFile = file;
-//   });
-// }
+class ProfileItem extends StatelessWidget {
+  final String title;
+  final String value;
+  final IconData iconData;
+
+  const ProfileItem({
+    Key? key,
+    required this.title,
+    required this.value,
+    required this.iconData,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        ListTile(
+          title: Text(title),
+          leading: Icon(iconData),
+          trailing: Text(value.isEmpty ? 'N/A' : value),
+        ),
+        Divider(color: Colors.white60),
+      ],
+    );
+  }
+}

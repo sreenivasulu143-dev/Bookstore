@@ -1,6 +1,8 @@
 import 'dart:io';
+import 'package:LanguageLearningApp/main.dart';
 import 'package:LanguageLearningApp/models/Datauser.dart';
 import 'package:LanguageLearningApp/screens/bottomnav.dart';
+import 'package:LanguageLearningApp/screens/home_screen.dart';
 import 'package:LanguageLearningApp/screens/login.dart';
 import 'package:LanguageLearningApp/screens/registration.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -14,8 +16,6 @@ class Profile extends StatefulWidget {
 }
 
 class _ProfileState extends State<Profile> {
-  File? _imageFile;
-
   bool isLoading = false;
   TextEditingController _UsernametextEditingController =
       TextEditingController();
@@ -136,8 +136,9 @@ class _ProfileState extends State<Profile> {
     });
     //var imageUpload = await uploadImage();
     Datauser dataUser = Datauser(
-        docid: '',
-        imageURL: '',
+        docid: 'QhZyuweUuvbwlW6m1MNd3PX8Yem2',
+        imageURL:
+            'https://upload.wikimedia.org/wikipedia/commons/thumb/4/42/Mahesh_Babu_in_Spyder.jpg/1200px-Mahesh_Babu_in_Spyder.jpg',
         Username: _UsernametextEditingController.text,
         mobile: _mobiletextEditingController.text,
         Gender: _GendertextEditingController.text,

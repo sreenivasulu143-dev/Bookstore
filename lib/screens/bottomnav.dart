@@ -16,7 +16,7 @@ class _MybottomState extends State<Mybottom> {
     HomeScreen(),
     //CartDetails(),
     //QuizScreen(),
-    Users(),
+    UserProfile(),
   ];
 
   @override
